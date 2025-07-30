@@ -47,6 +47,11 @@ public class NoInfrastructureDependencyFromExpositionRule extends BaseTreeVisito
         return imported.contains(".infrastructure.")
                 || imported.contains(".adapter.")
                 || imported.contains(".config.")
+                || imported.contains(".persistence.")
+                || imported.contains(".dao.")
+                || imported.startsWith("javax.persistence")
+                || imported.startsWith("jakarta.persistence")
+                || imported.startsWith("org.hibernate")
                 || imported.contains(".external.");
     }
 }
