@@ -8,7 +8,7 @@
   <name>arq-rules-plugin</name>
   <url>http://maven.apache.org</url>
    <properties>
-    <java.version>24</java.version>
+    <java.version>17</java.version>
     <sonar.api.version>9.9.0.65466</sonar.api.version>
     <sonar.java.plugin.version>8.14.1.39293</sonar.java.plugin.version>
   </properties>
@@ -74,11 +74,11 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Plugin-Key>mi-sonar-plugin</Plugin-Key>
-              <Plugin-Name>MiPluginSonarJava</Plugin-Name>
+              <Plugin-Key>arq-rules-plugin</Plugin-Key>
+              <Plugin-Name>My Custom Layered Architecture Rules</Plugin-Name>
               <Plugin-Version>1.0-SNAPSHOT</Plugin-Version>
-              <Plugin-Description>Plugin personalizado para detectar System.out.println</Plugin-Description>
-              <Plugin-Class>com.ejemplo.sonar.rules.MyCustomRulesPlugin</Plugin-Class>
+              <Plugin-Description>Plugin personalizado para detectar violaciones a la arquitectura en capas</Plugin-Description>
+              <Plugin-Class>com.miempresa.sonar.rules.MyCustomRulesPlugin</Plugin-Class>
             </manifestEntries>
           </archive>
         </configuration>
