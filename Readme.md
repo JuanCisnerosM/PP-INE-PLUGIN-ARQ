@@ -66,3 +66,32 @@ y despues
 ```bash
 docker restart sonarqube
 ```
+
+
+
+Para las PruebasEspecificas
+
+Este proyecto está organizado siguiendo una arquitectura en capas que permite separar responsabilidades, mejorar el mantenimiento del código y facilitar la validación con herramientas como SonarQube.
+
+## 🧱 Estructura del Proyecto por Capas
+### 📌 Descripción de cada capa
+- **exposition/**: Contiene los controladores o puntos de entrada, como REST, CLI o interfaces web. No debe contener lógica de negocio.
+- **service/**: Contiene la lógica de aplicación que orquesta los flujos entre la exposición y el dominio.
+- **domain/**: Incluye las entidades del negocio, lógica pura y validaciones. No depende de otras capas.
+- **repository/**: Se encarga del acceso a datos y define las interfaces para interactuar con fuentes de datos.
+
+### 📂 Estructura de carpetas
+```
+src/main/java/com/miempresa/miapp/
+├── exposition/             ← Capa de Exposición
+│   ├── rest/               ← (Capa de ) Presentación vía REST
+│   ├── cli/                ← (Opcional) Presentación vía línea de comandos
+│   └── web/                ← (Opcional) Presentación web/MVC tradicional
+│
+├── service/                ← Capa de Servicios (lógica de aplicación)
+│
+├── domain/                 ← Capa de Dominio (modelos, entidades, lógica de negocio pura)
+│
+├── repository/             ← Capa de Persistencia (interfaces y adaptadores de datos)
+```
+
