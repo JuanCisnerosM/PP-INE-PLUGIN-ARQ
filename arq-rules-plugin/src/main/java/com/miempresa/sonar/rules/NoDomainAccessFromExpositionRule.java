@@ -35,6 +35,7 @@ public class NoDomainAccessFromExpositionRule extends BaseTreeVisitor implements
     }
 
     private boolean isDomainPackage(String imported) {
-        return imported.contains(".domain.");
+        return imported.contains(".domain.")
+        && (imported.contains(".model.") || imported.contains(".entity."));
     }
 }
