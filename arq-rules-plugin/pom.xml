@@ -7,6 +7,12 @@
   <version>1.0-SNAPSHOT</version>
   <name>arq-rules-plugin</name>
   <url>http://maven.apache.org</url>
+   <properties>
+    <java.version>24</java.version>
+    <sonar.api.version>9.9.0.65466</sonar.api.version>
+    <sonar.java.plugin.version>8.14.1.39293</sonar.java.plugin.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
