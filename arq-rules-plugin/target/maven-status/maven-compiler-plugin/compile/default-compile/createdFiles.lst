@@ -1,0 +1,6 @@
+com\miempresa\sonar\App.class
+com\miempresa\sonar\rules\MyCustomRulesDefinition.class
+com\miempresa\sonar\rules\MyCustomRulesRegistrar.class
+com\miempresa\sonar\rules\MyCustomRulesPlugin.class
+com\miempresa\sonar\rules\NoDomainAccessFromExpositionRule.class
+com\miempresa\sonar\rules\NoRepositoryAccessFromExpositionRule.class
