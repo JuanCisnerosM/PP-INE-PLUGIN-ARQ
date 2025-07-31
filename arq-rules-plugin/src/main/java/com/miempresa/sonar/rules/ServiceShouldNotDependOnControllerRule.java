@@ -5,9 +5,7 @@ import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.ImportTree;
-import org.sonar.plugins.java.api.tree.Tree;
 
-import java.util.Objects;
 
 // Detecta si alguna clase en el paquete service hace referencia a clases en los paquetes controller,exposition,rest,cli,etc.
 // Si una clase ubicada en un paquete que contiene"service"importa o hace referencia a clases que están en paquetes como"controller","exposition","rest","cli",debe marcarse como violación.
