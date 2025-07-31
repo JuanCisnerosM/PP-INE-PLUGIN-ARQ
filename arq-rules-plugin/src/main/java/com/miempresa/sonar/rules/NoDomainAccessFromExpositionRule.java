@@ -1,41 +1,68 @@
 package com.miempresa.sonar.rules;
 
-import org.sonar.check.Rule;
-import org.sonar.plugins.java.api.JavaFileScanner;
-import org.sonar.plugins.java.api.JavaFileScannerContext;
-import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
-import org.sonar.plugins.java.api.tree.ImportTree;
+import org.sonar.api.batch.sensor.Sensor;
+import org.sonar.api.batch.sensor.SensorContext;
+import org.sonar.api.batch.sensor.SensorDescriptor;
+import org.sonar.api.batch.fs.FileSystem;
+import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.rule.RuleKey;
+import org.sonar.api.batch.sensor.issue.NewIssue;
+import org.sonar.api.batch.sensor.issue.NewIssueLocation;
+
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-@Rule(key = "NoDomainAccessFromExpositionRule")
-public class NoDomainAccessFromExpositionRule extends BaseTreeVisitor implements JavaFileScanner{
-    private JavaFileScannerContext context;
+public class NoDomainAccessFromExpositionRule implements Sensor {
+
+    private static final RuleKey RULE_KEY = RuleKey.of("arq-rules-plugin", "NoDomainAccessFromExpositionRule");
+    private static final Pattern IMPORT_PATTERN = Pattern.compile("import\\s+([\\w\\.]+);");
 
     @Override
-    public void scanFile(JavaFileScannerContext context) {
-        this.context = context;
-        scan(context.getTree());
+    public void describe(SensorDescriptor descriptor) {
+        descriptor.name("Regla para evitar acceso a domain desde exposition");
+        descriptor.onlyOnLanguage("java");
     }
 
     @Override
-    public void visitImport(ImportTree tree) {
-        String imported = tree.qualifiedIdentifier().toString();
+    public void execute(SensorContext context) {
+        FileSystem fs = context.fileSystem();
 
-        Path filePath = Path.of(context.getInputFile().uri());
-        if (isInExpositionPackage(filePath) && isDomainPackage(imported)) {
-            context.reportIssue(this, tree, "No debes acceder directamente a clases del paquete domain desde exposition. Usa servicios o DTOs.");
+        for (InputFile inputFile : fs.inputFiles(fs.predicates().hasLanguage("java"))) {
+            Path filePath = Path.of(inputFile.uri());
+            if (!isInExpositionPackage(filePath)) {
+                continue;
+            }
+
+            try {
+                for (String line : inputFile.contents().lines().toList()) {
+                    Matcher matcher = IMPORT_PATTERN.matcher(line);
+                    if (matcher.find()) {
+                        String imported = matcher.group(1);
+                        if (isDomainPackage(imported)) {
+                            NewIssue issue = context.newIssue().forRule(RULE_KEY);
+                            NewIssueLocation location = issue.newLocation()
+                                .on(inputFile)
+                                .message("No debes acceder directamente a clases del paquete domain desde exposition. Usa servicios o DTOs.");
+
+                            issue.at(location).save();
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                // Manejo de error
+            }
         }
-
-        super.visitImport(tree);
     }
-    
+
     private boolean isInExpositionPackage(Path path) {
         String normalizedPath = path.toString().replace("\\", "/").toLowerCase();
         return normalizedPath.contains("/exposition/") || normalizedPath.contains(".exposition.");
     }
 
     private boolean isDomainPackage(String imported) {
-        return imported.contains(".domain.")
-        && (imported.contains(".model.") || imported.contains(".entity."));
+        return imported.contains(".domain.") 
+            && (imported.contains(".model.") || imported.contains(".entity."));
     }
 }
