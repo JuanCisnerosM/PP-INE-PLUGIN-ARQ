@@ -5,7 +5,7 @@ import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.*;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 
 //  ¿Qué detecta esta regla?
@@ -29,8 +29,8 @@ public class UseDTOsInExpositionLayerRule extends BaseTreeVisitor implements Jav
 
     @Override
     public void visitMethod(MethodTree tree) {
-        Path filePath = context.getInputFile().path();
-        if (!isInExpositionPackage(filePath)) {
+        URI uri = context.getInputFile().uri();
+        if (!isInExpositionPackage(uri)) {
             return;
         }
 
@@ -55,8 +55,8 @@ public class UseDTOsInExpositionLayerRule extends BaseTreeVisitor implements Jav
         super.visitMethod(tree);
     }
 
-    private boolean isInExpositionPackage(Path path) {
-        String normalized = path.toString().replace("\\", "/").toLowerCase();
+    private boolean isInExpositionPackage(URI uri) {
+        String normalized = uri.toString().replace("\\", "/").toLowerCase();
         return normalized.contains("/exposition/") || normalized.contains(".exposition.");
     }
 
