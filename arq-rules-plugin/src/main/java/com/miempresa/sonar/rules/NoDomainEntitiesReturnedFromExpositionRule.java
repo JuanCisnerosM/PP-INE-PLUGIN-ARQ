@@ -5,10 +5,9 @@ import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.MethodTree;
-import org.sonar.plugins.java.api.tree.Tree;
 import org.sonar.plugins.java.api.semantic.Type;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 @Rule(key = "NoDomainEntitiesReturnedFromExpositionRule")
 public class NoDomainEntitiesReturnedFromExpositionRule extends BaseTreeVisitor implements JavaFileScanner {
@@ -28,8 +27,8 @@ public class NoDomainEntitiesReturnedFromExpositionRule extends BaseTreeVisitor 
             return;
         }
 
-        Path filePath = context.getInputFile().path();
-        if (isInExpositionPackage(filePath)) {
+        URI uri = context.getInputFile().uri();
+        if (isInExpositionPackage(uri)) {
             Type returnType = tree.symbol().returnType().type();
 
             if (returnType != null && isDomainPackage(returnType.fullyQualifiedName())) {
@@ -40,8 +39,8 @@ public class NoDomainEntitiesReturnedFromExpositionRule extends BaseTreeVisitor 
         super.visitMethod(tree);
     }
 
-    private boolean isInExpositionPackage(Path path) {
-        String normalized = path.toString().replace("\\", "/").toLowerCase();
+    private boolean isInExpositionPackage(URI uri) {
+        String normalized = uri.toString().replace("\\", "/").toLowerCase();
         return normalized.contains("/exposition/") || normalized.contains(".exposition.");
     }
 
