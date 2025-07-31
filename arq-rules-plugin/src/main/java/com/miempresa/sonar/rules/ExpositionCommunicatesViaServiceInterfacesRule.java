@@ -6,7 +6,7 @@ import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.tree.*;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 @Rule(key = "ExpositionCommunicatesViaServiceInterfacesRule")
 public class ExpositionCommunicatesViaServiceInterfacesRule extends BaseTreeVisitor implements JavaFileScanner {
@@ -21,7 +21,7 @@ public class ExpositionCommunicatesViaServiceInterfacesRule extends BaseTreeVisi
 
     @Override
     public void visitMemberSelectExpression(MemberSelectExpressionTree tree) {
-        if (!isInExpositionPackage(context.getInputFile().path())) return;
+        if (!isInExpositionPackage(context.getInputFile().uri())) return;
 
         Symbol symbol = tree.identifier().symbol();
 
@@ -37,7 +37,7 @@ public class ExpositionCommunicatesViaServiceInterfacesRule extends BaseTreeVisi
 
     @Override
     public void visitNewClass(NewClassTree tree) {
-        if (!isInExpositionPackage(context.getInputFile().path())) return;
+        if (!isInExpositionPackage(context.getInputFile().uri())) return;
 
         if (tree.symbolType() != null) {
             String fqName = tree.symbolType().fullyQualifiedName().toLowerCase();
@@ -49,8 +49,8 @@ public class ExpositionCommunicatesViaServiceInterfacesRule extends BaseTreeVisi
         super.visitNewClass(tree);
     }
 
-    private boolean isInExpositionPackage(Path path) {
-        String normalized = path.toString().replace("\\", "/").toLowerCase();
+    private boolean isInExpositionPackage(URI uri) {
+        String normalized = uri.toString().replace("\\", "/").toLowerCase();
         return normalized.contains("/exposition/") || normalized.contains(".exposition.");
     }
 
