@@ -1,7 +1,34 @@
+# Carpeta de compilación de Maven
 target/
-/*.log
+
+# Archivos de logs
+*.log
+
+# Archivos compilados de Java
 *.class
+
+# Archivos empaquetados
 *.jar
+*.war
+*.ear
+
+# Archivos y carpetas de IntelliJ IDEA
 .idea/
 *.iml
-*.class
+
+# Archivos y carpetas de Eclipse (por si acaso)
+.project
+.classpath
+.settings/
+
+# Archivos y carpetas de VS Code
+.vscode/
+
+# Archivos temporales y backups
+*.tmp
+*.bak
+*.swp
+
+# Archivos de sistema (Mac/Windows)
+.DS_Store
+Thumbs.db
