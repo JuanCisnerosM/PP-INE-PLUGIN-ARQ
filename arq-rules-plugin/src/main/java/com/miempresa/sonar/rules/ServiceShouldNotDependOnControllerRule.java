@@ -9,6 +9,14 @@ import org.sonar.plugins.java.api.tree.Tree;
 
 import java.util.Objects;
 
+// Detecta si alguna clase en el paquete service hace referencia a clases en los paquetes controller,exposition,rest,cli,etc.
+// Si una clase ubicada en un paquete que contiene"service"importa o hace referencia a clases que están en paquetes como"controller","exposition","rest","cli",debe marcarse como violación.
+
+// Esta regla:
+// Funciona en fase de compilación.
+// Detecta cualquier clase de la capa service que importe directamente una clase de controller o exposition.
+// Asegura que la comunicación siga siendo unidireccional: controller → service, y no al revés.
+
 @Rule(key = "ServiceShouldNotDependOnControllerRule")
 public class ServiceShouldNotDependOnControllerRule extends BaseTreeVisitor implements JavaFileScanner {
 
