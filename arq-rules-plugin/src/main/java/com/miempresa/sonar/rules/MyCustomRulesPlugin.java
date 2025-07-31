@@ -9,8 +9,6 @@ public class MyCustomRulesPlugin implements Plugin {
         // Registrar las clases que extienden la API de extensión
         // Clases base del plugin
         context.addExtension(MyCustomRulesDefinition.class);
-        context.addExtension(MyCustomRulesRegistrar.class);
-        
         // CLAR001: Evitar acceso al dominio desde exposición
         context.addExtension(NoDomainAccessFromExpositionRule.class);
         // CLAR002: Evitar acceso a repositorios desde exposición
