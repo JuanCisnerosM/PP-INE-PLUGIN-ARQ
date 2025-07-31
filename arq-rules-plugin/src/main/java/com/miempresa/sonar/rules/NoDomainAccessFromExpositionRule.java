@@ -21,7 +21,7 @@ public class NoDomainAccessFromExpositionRule extends BaseTreeVisitor implements
     public void visitImport(ImportTree tree) {
         String imported = tree.qualifiedIdentifier().toString();
 
-        Path filePath = context.getInputFile().path();
+        Path filePath = Path.of(context.getInputFile().uri());
         if (isInExpositionPackage(filePath) && isDomainPackage(imported)) {
             context.reportIssue(this, tree, "No debes acceder directamente a clases del paquete domain desde exposition. Usa servicios o DTOs.");
         }
