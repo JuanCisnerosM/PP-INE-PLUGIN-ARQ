@@ -20,7 +20,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Exposition", "domain-driven-design", "java");
-        repo.done();
 
         // CLAR002: Evitar acceso directo al paquete repository desde exposition
         // Implementada en: NoRepositoryAccessFromExpositionRule.java
@@ -31,7 +30,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Exposition", "domain-driven-design", "java");
-        repo.done();
             
         // CLAR003: Evitar lógica de negocio en la capa de exposition
         // Implementada en: NoBusinessLogicInExpositionRule.java
@@ -42,7 +40,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Exposition", "clean-code", "java");
-        repo.done();
         
         // CLAR004: Usar DTOs en la capa de exposition
         // Implementada en: UseDTOsInExpositionLayerRule.java
@@ -53,7 +50,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Exposition", "dto", "java");
-        repo.done();
         
             // CLAR005: Evitar modelo de dominio en la capa de exposition
         // Implementada en: AvoidDomainModelInExpositionRule.java
@@ -64,7 +60,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Exposition", "domain-driven-design", "java");
-        repo.done();
         
         // CLAR006: La capa de exposition debe comunicarse a través de interfaces de servicio
         // Implementada en: ExpositionCommunicatesViaServiceInterfacesRule.java
@@ -75,7 +70,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Exposition", "interfaces", "java");
-        repo.done();
         
             // CLAR007: La capa de exposition debe delegar a servicios
         // Implementada en: ExpositionMustDelegateToServiceRule.java
@@ -86,7 +80,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Exposition", "delegation", "java");
-        repo.done();
         
             // CLAR008: No retornar entidades de dominio desde exposition
         // Implementada en: NoDomainEntitiesReturnedFromExpositionRule.java
@@ -97,7 +90,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Exposition", "domain-driven-design", "java");
-        repo.done();
         
         // CLAR009: No dependencias de infraestructura desde exposition
         // Implementada en: NoInfrastructureDependencyFromExpositionRule.java
@@ -108,7 +100,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Exposition", "infrastructure", "java");
-        repo.done();
         
             // CLAR010: No acceso directo al modelo de repositorio desde infraestructura
         // Implementada en: NoDirectAccessToRepoModelInfraRule.java
@@ -119,7 +110,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Exposition", "repository-pattern", "java");
-        repo.done();
 
         // Presentation
         // CLAR011
@@ -131,7 +121,6 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setSeverity("MAJOR")
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "Presentation", "database", "java");
-        repo.done();
         
         // ServiceShouldNotDependOnControllerRule
         // CLAR012: La capa de servicio no debe depender de la capa de presentación
