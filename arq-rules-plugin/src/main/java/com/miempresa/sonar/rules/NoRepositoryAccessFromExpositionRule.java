@@ -6,7 +6,7 @@ import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.ImportTree;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 @Rule(key = "NoRepositoryAccessFromExpositionRule")
 public class NoRepositoryAccessFromExpositionRule extends BaseTreeVisitor implements JavaFileScanner {
@@ -23,16 +23,16 @@ public class NoRepositoryAccessFromExpositionRule extends BaseTreeVisitor implem
     public void visitImport(ImportTree tree) {
         String imported = tree.qualifiedIdentifier().toString();
 
-        Path filePath = context.getInputFile().path();
-        if (isInExpositionPackage(filePath) && isRepositoryPackage(imported)) {
+        URI uri = context.getInputFile().uri();
+        if (isInExpositionPackage(uri) && isRepositoryPackage(imported)) {
             context.reportIssue(this, tree, "No debes acceder directamente a clases del paquete repository desde exposition. Usa servicios o DTOs.");
         }
 
         super.visitImport(tree);
     }
 
-    private boolean isInExpositionPackage(Path path) {
-        String normalizedPath = path.toString().replace("\\", "/").toLowerCase();
+    private boolean isInExpositionPackage(URI uri) {
+        String normalizedPath = uri.toString().replace("\\", "/").toLowerCase();
         return normalizedPath.contains("/exposition/") || normalizedPath.contains(".exposition.");
     }
 
