@@ -5,7 +5,7 @@ import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.*;
 
-import java.nio.file.Path;
+import java.net.URI;
 import java.util.List;
 
 // Criterios de detección:
@@ -27,7 +27,7 @@ public class ExpositionMustDelegateToServiceRule extends BaseTreeVisitor impleme
 
     @Override
     public void visitMethod(MethodTree tree) {
-        if (!isInExpositionPackage(context.getInputFile().path())) return;
+        if (!isInExpositionPackage(context.getInputFile().uri())) return;
 
         BlockTree body = tree.block();
         if (body == null) return;
@@ -56,8 +56,8 @@ public class ExpositionMustDelegateToServiceRule extends BaseTreeVisitor impleme
         super.visitMethod(tree);
     }
 
-    private boolean isInExpositionPackage(Path path) {
-        String normalized = path.toString().replace("\\", "/").toLowerCase();
+    private boolean isInExpositionPackage(URI uri) {
+        String normalized = uri.toString().replace("\\", "/").toLowerCase();
         return normalized.contains("/exposition/") || normalized.contains(".exposition.");
     }
 }
