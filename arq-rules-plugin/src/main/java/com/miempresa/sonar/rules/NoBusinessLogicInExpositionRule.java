@@ -3,10 +3,7 @@ package com.miempresa.sonar.rules;
 import org.sonar.check.Rule;
 import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
-import org.sonar.plugins.java.api.semantic.Symbol;
 import org.sonar.plugins.java.api.tree.*;
-
-import java.nio.file.Path;
 
 @Rule(key = "NoBusinessLogicInExposition")
 public class NoBusinessLogicInExpositionRule extends BaseTreeVisitor implements JavaFileScanner {
@@ -60,8 +57,7 @@ public class NoBusinessLogicInExpositionRule extends BaseTreeVisitor implements 
             ExpressionTree expr = ((ExpressionStatementTree) tree).expression();
             if (expr instanceof MethodInvocationTree) {
                 MethodInvocationTree methodCall = (MethodInvocationTree) expr;
-                Symbol symbol = methodCall.symbol();
-                if (symbol != null && symbol.owner().type().fullyQualifiedName().contains(".domain.")) {
+                if (methodCall.methodSymbol() != null && methodCall.methodSymbol().owner().type().fullyQualifiedName().contains(".domain.")) {
                     context.reportIssue(this, tree, "Llamada directa a lógica de dominio en exposición. Usa servicios intermedios.");
                 }
             }
