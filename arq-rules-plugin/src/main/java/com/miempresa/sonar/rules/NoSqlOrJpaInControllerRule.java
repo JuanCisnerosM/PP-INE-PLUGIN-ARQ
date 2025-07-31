@@ -5,7 +5,7 @@ import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.*;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 // Capa de Presentacion
 
@@ -22,9 +22,9 @@ public class NoSqlOrJpaInControllerRule extends BaseTreeVisitor implements JavaF
     @Override
     public void scanFile(JavaFileScannerContext context) {
         this.context = context;
-        Path path = context.getInputFile().path();
+        URI uri = context.getInputFile().uri();
 
-        if (isInExpositionPackage(path)) {
+        if (isInExpositionPackage(uri)) {
             scan(context.getTree());
         }
     }
@@ -55,8 +55,8 @@ public class NoSqlOrJpaInControllerRule extends BaseTreeVisitor implements JavaF
         super.visitLiteral(tree);
     }
 
-    private boolean isInExpositionPackage(Path path) {
-        String normalized = path.toString().replace("\\", "/").toLowerCase();
+    private boolean isInExpositionPackage(URI uri) {
+        String normalized = uri.toString().replace("\\", "/").toLowerCase();
         return normalized.contains("/controller/") || normalized.contains("/exposition/") || normalized.contains(".controller.") || normalized.contains(".exposition.");
     }
 }
