@@ -5,7 +5,7 @@ import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.*;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 @Rule(key = "AvoidDomainModelInExpositionRule")
 public class AvoidDomainModelInExpositionRule extends BaseTreeVisitor implements JavaFileScanner {
@@ -20,7 +20,7 @@ public class AvoidDomainModelInExpositionRule extends BaseTreeVisitor implements
 
     @Override
     public void visitMethod(MethodTree tree) {
-        if (!isInExpositionPackage(context.getInputFile().path())) return;
+        if (!isInExpositionPackage(context.getInputFile().uri())) return;
 
         // Verificar tipo de retorno
         String returnType = tree.returnType().symbolType().fullyQualifiedName();
@@ -41,8 +41,8 @@ public class AvoidDomainModelInExpositionRule extends BaseTreeVisitor implements
         super.visitMethod(tree);
     }
 
-    private boolean isInExpositionPackage(Path path) {
-        String normalized = path.toString().replace("\\", "/").toLowerCase();
+    private boolean isInExpositionPackage(URI uri) {
+        String normalized = uri.toString().replace("\\", "/").toLowerCase();
         return normalized.contains("/exposition/") || normalized.contains(".exposition.");
     }
 
