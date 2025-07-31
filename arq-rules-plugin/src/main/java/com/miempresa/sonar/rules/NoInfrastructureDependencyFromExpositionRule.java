@@ -6,7 +6,7 @@ import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.ImportTree;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 // ¿Qué hace?
 // Cuando analiza un archivo en /exposition/, revisa cada import.
@@ -28,17 +28,17 @@ public class NoInfrastructureDependencyFromExpositionRule extends BaseTreeVisito
     public void visitImport(ImportTree tree) {
         String imported = tree.qualifiedIdentifier().toString();
 
-        Path filePath = context.getInputFile().path();
+        URI uri = context.getInputFile().uri();
 
-        if (isInExpositionPackage(filePath) && isInfrastructurePackage(imported)) {
+        if (isInExpositionPackage(uri) && isInfrastructurePackage(imported)) {
             context.reportIssue(this, tree, "No uses dependencias de infraestructura o adaptadores técnicos desde la capa de exposición.");
         }
 
         super.visitImport(tree);
     }
 
-    private boolean isInExpositionPackage(Path path) {
-        String normalized = path.toString().replace("\\", "/").toLowerCase();
+    private boolean isInExpositionPackage(URI uri) {
+        String normalized = uri.toString().replace("\\", "/").toLowerCase();
         return normalized.contains("/exposition/") || normalized.contains(".exposition.");
     }
 
