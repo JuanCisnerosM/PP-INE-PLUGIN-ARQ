@@ -5,7 +5,7 @@ import org.sonar.plugins.java.api.JavaFileScanner;
 import org.sonar.plugins.java.api.JavaFileScannerContext;
 import org.sonar.plugins.java.api.tree.BaseTreeVisitor;
 import org.sonar.plugins.java.api.tree.ImportTree;
-import java.nio.file.Path;
+import java.net.URI;
 
 @Rule(key = "NoDirectAccessToRepoModelInfra")
 public class NoDirectAccessToRepoModelInfraRule extends BaseTreeVisitor implements JavaFileScanner {
@@ -16,8 +16,8 @@ public class NoDirectAccessToRepoModelInfraRule extends BaseTreeVisitor implemen
     public void scanFile(JavaFileScannerContext context) {
         this.context = context;
 
-        Path path = context.getInputFile().path();
-        if (isInExpositionPackage(path)) {
+        URI uri = context.getInputFile().uri();
+        if (isInExpositionPackage(uri)) {
             scan(context.getTree());
         }
     }
@@ -33,8 +33,8 @@ public class NoDirectAccessToRepoModelInfraRule extends BaseTreeVisitor implemen
         super.visitImport(tree);
     }
 
-    private boolean isInExpositionPackage(Path path) {
-        String normalized = path.toString().replace("\\", "/").toLowerCase();
+    private boolean isInExpositionPackage(URI uri) {
+        String normalized = uri.toString().replace("\\", "/").toLowerCase();
         return normalized.contains("/exposition/") || normalized.contains(".exposition.");
     }
 }
