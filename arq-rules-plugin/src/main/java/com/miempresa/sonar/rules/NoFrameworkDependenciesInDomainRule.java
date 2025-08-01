@@ -135,3 +135,61 @@ public class NoFrameworkDependenciesInDomainRule implements Sensor {
         }
     }
 }
+
+// Esta regla detectará cuando clases en el paquete modelo o domain tengan dependencias de framework, específicamente:
+
+// Anotaciones prohibidas:
+
+// @Component, @Service, @Repository
+// @Controller, @RestController
+// @Autowired, @Inject, @Value
+// @Transactional
+// @PersistenceContext
+// Anotaciones de mapeo web (@RequestMapping, @GetMapping, etc.)
+// Importaciones prohibidas:
+
+// org.springframework.*
+// javax.inject.* / jakarta.inject.*
+// javax.persistence.* / jakarta.persistence.*
+// org.hibernate.*
+
+// Ejemplo de código que violaría esta regla
+// package mx.ipn.institucional.aplicaciones.proyectopruebasexcelcior.modelo;
+
+// import org.springframework.stereotype.Component;
+// import org.springframework.beans.factory.annotation.Autowired;
+
+// @Component // Violación: El dominio no debe tener anotaciones de Spring
+// public class Usuario {
+    
+//     @Autowired // Violación: El dominio no debe usar inyección de dependencias
+//     private SomeService service;
+    
+//     private String nombre;
+//     private String email;
+    
+//     // getters y setters
+// }
+
+// Ejemplo de código correcto para el dominio:
+
+// package mx.ipn.institucional.aplicaciones.proyectopruebasexcelcior.modelo;
+
+// // Sin importaciones de framework
+// public class Usuario {
+    
+//     private String nombre;
+//     private String email;
+    
+//     public Usuario(String nombre, String email) {
+//         this.nombre = nombre;
+//         this.email = email;
+//     }
+    
+//     // getters y setters puros
+//     // lógica de negocio pura (sin dependencias externas)
+// }
+
+// La regla generará un issue con el mensaje: "El dominio/modelo no debe tener dependencias con Spring (@Component, @Service, @Repository). Debe ser completamente independiente del framework."
+
+// Esta regla asegura que el dominio mantenga su independencia del framework, siguiendo los principios de Domain-Driven Design y arquitectura hexagonal
