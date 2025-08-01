@@ -84,22 +84,22 @@ public class NoDomainAccessFromExpositionRule implements Sensor {
 
     private void analyzeFile(InputFile inputFile, SensorContext context) throws IOException {
         String fileContent = inputFile.contents();
+        String[] lines = fileContent.split("\n");
         
         // Analizar imports
-        for (String line : fileContent.lines().toList()) {
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
             Matcher matcher = IMPORT_PATTERN.matcher(line);
             if (matcher.find()) {
                 String imported = matcher.group(1);
                 if (isDomainPackage(imported)) {
-                    createIssue(context, inputFile, imported);
+                    createIssue(context, inputFile, imported, i + 1, line.trim());
                 }
             }
         }
 
         // Analizar el contenido del archivo en busca de referencias directas
-        if (containsDirectDomainReferences(fileContent)) {
-            createDirectReferenceIssue(context, inputFile);
-        }
+        analyzeDirectReferences(context, inputFile, lines);
     }
 
     private boolean isInExpositionPackage(Path path) {
@@ -120,29 +120,59 @@ public class NoDomainAccessFromExpositionRule implements Sensor {
             .anyMatch(pattern -> normalizedContent.contains(pattern.replace("/", "").replace(".", "")));
     }
 
-    private void createIssue(SensorContext context, InputFile inputFile, String importedClass) {
+    private void createIssue(SensorContext context, InputFile inputFile, String importedClass, int line, String codeLine) {
         NewIssue issue = context.newIssue().forRule(RULE_KEY);
         NewIssueLocation location = issue.newLocation()
             .on(inputFile)
+            .at(inputFile.selectLine(line))
             .message(String.format(
-                "No se debe acceder directamente a clases del modelo/dominio ('%s') desde la capa de exposición. " +
-                "Utiliza DTOs y servicios para acceder a los datos del modelo.",
-                importedClass
+                "No se debe acceder directamente a clases del modelo/dominio '%s' desde la capa de exposición.\n" +
+                "Línea problemática: %s\n" +
+                "Solución: Utiliza DTOs y servicios para acceder a los datos del modelo.",
+                importedClass,
+                codeLine
             ));
 
         issue.at(location).save();
     }
 
-    private void createDirectReferenceIssue(SensorContext context, InputFile inputFile) {
-        NewIssue issue = context.newIssue().forRule(RULE_KEY);
-        NewIssueLocation location = issue.newLocation()
-            .on(inputFile)
-            .message(
-                "Se detectaron referencias directas a clases del modelo/dominio en el código. " +
-                "Esto viola el principio de capas. Utiliza DTOs y servicios para acceder a los datos del modelo."
-            );
+    private void analyzeDirectReferences(SensorContext context, InputFile inputFile, String[] lines) {
 
-        issue.at(location).save();
+        Pattern fieldPattern = Pattern.compile("(private|protected|public)?\\s*([\\w\\<\\>]+)\\s+(\\w+)\\s*;");
+        Pattern methodPattern = Pattern.compile("(private|protected|public)?\\s*([\\w\\<\\>]+)\\s+(\\w+)\\s*\\(");
+
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+
+            // Buscar declaraciones de campos
+            Matcher fieldMatcher = fieldPattern.matcher(line);
+            if (fieldMatcher.find()) {
+                String type = fieldMatcher.group(2);
+                if (isDomainType(type)) {
+                    createIssue(context, inputFile, type, i + 1, line.trim());
+                }
+            }
+
+            // Buscar declaraciones de métodos
+            Matcher methodMatcher = methodPattern.matcher(line);
+            if (methodMatcher.find()) {
+                String returnType = methodMatcher.group(2);
+                if (isDomainType(returnType)) {
+                    createIssue(context, inputFile, returnType, i + 1, line.trim());
+                }
+            }
+        }
+    }
+
+    private boolean isDomainType(String typeParam) {
+        // Eliminar genéricos si existen
+        final String type = typeParam.contains("<") 
+            ? typeParam.substring(0, typeParam.indexOf("<"))
+            : typeParam;
+        
+        // Comprobar si el tipo pertenece a un paquete de dominio
+        return DOMAIN_PATTERNS.stream()
+            .anyMatch(pattern -> type.toLowerCase().contains(pattern.replace("/", "").replace(".", "")));
     }
 }
 
