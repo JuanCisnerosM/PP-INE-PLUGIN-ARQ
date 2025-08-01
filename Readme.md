@@ -103,3 +103,31 @@ src/main/java/com/miempresa/miapp/
 ├── repository/             ← Capa de Persistencia (interfaces y adaptadores de datos)
 ```
 
+
+Reglas:
+
+Exsposicion:
+- NoDomainAccessFromExpositionRule: 
+  - Un endpoint de exposición (por ejemplo, REST o CLI) no debe acceder 
+directamente a clases del paquete domain 
+    - Solo debe comunicarse con servicios mediante interfaces o 
+DTOs (Data Transfer Object). 
+
+- NoRepositoryAccessFromExpositionRule
+  - Un endpoint de exposición no debe acceder directamente a clases del 
+paquete repository 
+    - Toda persistencia debe manejarse dentro de los servicios 
+
+
+
+Presentacion:
+
+
+Servicio/Aplicacion:
+
+
+Dominio/Modelo:
+
+
+Persistencia:
+

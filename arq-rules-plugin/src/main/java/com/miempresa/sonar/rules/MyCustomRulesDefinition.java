@@ -122,6 +122,7 @@ public class MyCustomRulesDefinition implements RulesDefinition {
         //     .setType(RuleType.CODE_SMELL)
         //     .setTags("architecture", "presentation", "database", "java");
         
+        // // Service
         // // ServiceShouldNotDependOnControllerRule
         // // CLAR012: La capa de servicio no debe depender de la capa de presentación
         // repo.createRule("ServiceShouldNotDependOnControllerRule")

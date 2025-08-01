@@ -13,7 +13,7 @@ public class MyCustomRulesPlugin implements Plugin {
         context.addExtension(NoDomainAccessFromExpositionRule.class);
         // CLAR002: Evitar acceso a repositorios desde exposición
         context.addExtension(NoRepositoryAccessFromExpositionRule.class);
-        // // CLAR003: Evitar lógica de negocio en exposición
+        // // CLAR003: Evitar lógica de negocio en exposición (CREO QUE NO ESTA FUNCIONANDO CORRECTAMENTE)
         // context.addExtension(NoBusinessLogicInExpositionRule.class);
         // // CLAR004: Usar DTOs en la capa de exposición
         // context.addExtension(UseDTOsInExpositionLayerRule.class);
