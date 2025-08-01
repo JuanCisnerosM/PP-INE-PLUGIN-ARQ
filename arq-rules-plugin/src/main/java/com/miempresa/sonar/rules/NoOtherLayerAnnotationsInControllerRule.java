@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Rule(
-    key = "NoOtherLayerAnnotationsInController",
+    key = "NoOtherLayerAnnotationsInControllerRule",
     name = "Controllers should not have annotations from other layers",
     description = "Controllers should not have annotations like @Service or @Repository. Their role should be limited strictly to handling requests.",
     priority = Priority.MAJOR,

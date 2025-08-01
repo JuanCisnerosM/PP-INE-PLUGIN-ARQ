@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Rule(
-    key = "NoFrameworkDependenciesInDomain",
+    key = "NoFrameworkDependenciesInDomainRule",
     name = "Domain/Model should not have framework dependencies",
     description = "Domain/Model layer should not have Spring dependencies like @Component, @Service, @Repository. It must be completely framework independent.",
     priority = Priority.MAJOR,

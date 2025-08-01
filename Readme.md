@@ -121,13 +121,25 @@ paquete repository
 
 
 Presentacion:
+- NoPersistenceInControllerRule:
+  - Un Controller no debe contener consultas SQL o llamadas a 
+EntityManager, JPA, JDBC 
+   - La persistencia es responsabilidad de los Repository
+- NoOtherLayerAnnotationsInControllerRule:
+  - Un Controller no debe tener anotaciones de otras capas, como 
+@Service o @Repository 
+   - Su rol debe limitarse estrictamente a manejar peticiones.
+
+
 
 
 Servicio/Aplicacion:
 
 
 Dominio/Modelo:
-
-
+- NoFrameworkDependenciesInDomainRule
+  - No debe tener dependencias con Spring (@Component, @Service, 
+@Repository) 
+   - Debe ser completamente independiente del framework.
 Persistencia:
 

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Rule(
-    key = "NoPersistenceInController",
+    key = "NoPersistenceInControllerRule",
     name = "Controllers should not contain direct persistence operations",
     description = "Controllers should not contain SQL queries or direct calls to EntityManager, JPA, JDBC. Persistence operations should be handled by Repositories.",
     priority = Priority.MAJOR,

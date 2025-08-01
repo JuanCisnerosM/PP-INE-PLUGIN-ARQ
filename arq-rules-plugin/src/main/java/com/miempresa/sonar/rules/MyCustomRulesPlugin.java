@@ -9,10 +9,31 @@ public class MyCustomRulesPlugin implements Plugin {
         // Registrar las clases que extienden la API de extensión
         // Clases base del plugin
         context.addExtension(MyCustomRulesDefinition.class);
+
+        // Exposición
         // CLAR001: Evitar acceso al dominio desde exposición
         context.addExtension(NoDomainAccessFromExpositionRule.class);
         // CLAR002: Evitar acceso a repositorios desde exposición
         context.addExtension(NoRepositoryAccessFromExpositionRule.class);
+        
+        // Presentacion
+        // CLAR011: No persistencia en controladores
+        context.addExtension(NoPersistenceInControllerRule.class);
+        // CLAR012: No anotaciones de otras capas en controladores
+        context.addExtension(NoOtherLayerAnnotationsInControllerRule.class);
+
+        // Servicios/Aplicación
+        // CLAR021: No acceso a controladores desde servicios
+        context.addExtension(NoControllerAccessFromServiceRule.class); 
+        
+        // Domain/Modelo
+        // CLAR031: No dependencias de framework en dominio
+        context.addExtension(NoFrameworkDependenciesInDomainRule.class);
+
+
+
+
+
         // // CLAR003: Evitar lógica de negocio en exposición (CREO QUE NO ESTA FUNCIONANDO CORRECTAMENTE)
         // context.addExtension(NoBusinessLogicInExpositionRule.class);
         // // CLAR004: Usar DTOs en la capa de exposición
