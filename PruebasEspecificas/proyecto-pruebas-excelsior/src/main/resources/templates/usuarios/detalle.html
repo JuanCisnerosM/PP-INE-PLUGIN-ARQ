@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Detalle de Usuario</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+        <h1>Detalle de Usuario</h1>
+
+        <div
+            th:if="${usuarioDTO.mensaje}"
+            th:text="${usuarioDTO.mensaje}"
+            th:style="${usuarioDTO.mensaje.startsWith('Error') ? 'color: red;' : 'color: green;'}"
+        ></div>
+
+        <div>
+            <p><strong>ID:</strong> <span th:text="${usuarioDTO.id}"></span></p>
+            <p>
+                <strong>Nombre:</strong>
+                <span th:text="${usuarioDTO.nombre}"></span>
+            </p>
+            <p>
+                <strong>Email:</strong>
+                <span th:text="${usuarioDTO.email}"></span>
+            </p>
+        </div>
+
+        <a th:href="@{/usuarios/nuevo}">Crear nuevo usuario</a>
+    </body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Formulario de Usuario</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+        <h1>Formulario de Usuario</h1>
+
+        <div
+            th:if="${usuarioDTO.mensaje}"
+            th:text="${usuarioDTO.mensaje}"
+            th:style="${usuarioDTO.mensaje.startsWith('Error') ? 'color: red;' : 'color: green;'}"
+        ></div>
+
+        <form
+            th:action="@{/usuarios/guardar}"
+            th:object="${usuarioDTO}"
+            method="post"
+        >
+            <input type="hidden" th:field="*{id}" />
+
+            <div>
+                <label>Nombre:</label>
+                <input type="text" th:field="*{nombre}" required />
+            </div>
+
+            <div>
+                <label>Email:</label>
+                <input type="email" th:field="*{email}" required />
+            </div>
+
+            <button type="submit">Guardar</button>
+        </form>
+    </body>
+</html>
