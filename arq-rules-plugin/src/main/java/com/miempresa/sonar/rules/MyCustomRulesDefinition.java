@@ -21,15 +21,15 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "exposition", "domaindrivendesign", "java");
 
-        // // CLAR002: Evitar acceso directo al paquete repository desde exposition
-        // // Implementada en: NoRepositoryAccessFromExpositionRule.java
-        // repo.createRule("NoRepositoryAccessFromExpositionRule")
-        //     .setName("Evita acceso al paquete repository desde exposition")
-        //     .setHtmlDescription("No debes acceder directamente a clases del paquete repository desde exposition. " + 
-        //         "Usa servicios o DTOs para manejar la persistencia de datos.")
-        //     .setSeverity("MAJOR")
-        //     .setType(RuleType.CODE_SMELL)
-        //     .setTags("architecture", "exposition", "domaindrivendesign", "java");
+        // CLAR002: Evitar acceso directo al paquete repository desde exposition
+        // Implementada en: NoRepositoryAccessFromExpositionRule.java
+        repo.createRule("NoRepositoryAccessFromExpositionRule")
+            .setName("Evita acceso al paquete repository desde exposition")
+            .setHtmlDescription("No debes acceder directamente a clases del paquete repository desde exposition. " + 
+                "Usa servicios o DTOs para manejar la persistencia de datos.")
+            .setSeverity("MAJOR")
+            .setType(RuleType.CODE_SMELL)
+            .setTags("architecture", "exposition", "domaindrivendesign", "java");
             
         // // CLAR003: Evitar lógica de negocio en la capa de exposition
         // // Implementada en: NoBusinessLogicInExpositionRule.java
