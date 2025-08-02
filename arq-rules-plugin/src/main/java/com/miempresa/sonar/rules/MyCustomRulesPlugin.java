@@ -6,7 +6,7 @@ public class MyCustomRulesPlugin implements Plugin {
 
     @Override
     public void define(Context context) {
-        // Registrar las clases que extienden la API de extensión
+        // TODO Registrar las clases que extienden la API de extensión
         // Clases base del plugin
         context.addExtension(MyCustomRulesDefinition.class);
 
@@ -24,12 +24,17 @@ public class MyCustomRulesPlugin implements Plugin {
 
         // Servicios/Aplicación
         // CLAR021: No acceso a controladores desde servicios
-        context.addExtension(NoControllerAccessFromServiceRule.class); 
+        context.addExtension(NoControllerAccessFromServiceRule.class);
+        // CLAR022: No lógica de persistencia en servicios
+        context.addExtension(NoPersistenceInServiceRule.class); 
         
         // Domain/Modelo
         // CLAR031: No dependencias de framework en dominio
         context.addExtension(NoFrameworkDependenciesInDomainRule.class);
 
+        // Persistencia
+        // CLAR041: No acceso a capas superiores desde repositorios
+        context.addExtension(NoUpperLayerAccessFromRepositoryRule.class);
 
 
 

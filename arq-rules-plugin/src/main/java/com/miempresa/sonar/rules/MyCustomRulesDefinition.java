@@ -10,6 +10,7 @@ public class MyCustomRulesDefinition implements RulesDefinition {
         NewRepository repo = context.createRepository("arq-rules-plugin", "java");
         repo.setName("My Custom Layered Architecture Rules");
 
+        // TODO Agregar reglas personalizadas, asi como su descripcion
         // Exposition
         // CLAR001: Evitar acceso directo al paquete domain desde exposition
         // Implementada en: NoDomainAccessFromExpositionRule.java
@@ -65,6 +66,16 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "services", "unidirectional-communication", "java");
 
+        // CLAR022: No lógica de persistencia en servicios
+        // Implementada en: NoPersistenceInServiceRule.java
+        repo.createRule("NoPersistenceInServiceRule")
+            .setName("Los Services no deben contener lógica de persistencia directa")
+            .setHtmlDescription("Los Services no deben contener SQL, EntityManager, ni lógica de acceso a datos directa. " +
+                "La lógica de persistencia pertenece a los Repositories para mantener el principio de responsabilidad única.")
+            .setSeverity("MAJOR")
+            .setType(RuleType.CODE_SMELL)
+            .setTags("architecture", "services", "persistence", "single-responsibility", "java");
+
         // Domain/Modelo
         // CLAR031: No dependencias de framework en dominio
         // Implementada en: NoFrameworkDependenciesInDomainRule.java
@@ -76,6 +87,17 @@ public class MyCustomRulesDefinition implements RulesDefinition {
             .setType(RuleType.CODE_SMELL)
             .setTags("architecture", "domain", "framework-independence", "java");
         
+        // Persistencia
+        // CLAR041: No acceso a capas superiores desde repositorios
+        // Implementada en: NoUpperLayerAccessFromRepositoryRule.java
+        repo.createRule("NoUpperLayerAccessFromRepositoryRule")
+            .setName("Los Repositories no deben llamar a clases de servicios o presentación")
+            .setHtmlDescription("Los Repositories no deben llamar directamente a clases de la capa de servicios o presentación. " +
+                "Esto rompe completamente la arquitectura en capas y genera ciclos entre infraestructura ↔ servicio ↔ presentación.")
+            .setSeverity("CRITICAL")
+            .setType(RuleType.CODE_SMELL)
+            .setTags("architecture", "persistence", "layered-architecture", "cyclic-dependencies", "java");
+
         repo.done();
     }
 }
