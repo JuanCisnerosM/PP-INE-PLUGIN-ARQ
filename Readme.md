@@ -1,3 +1,6 @@
+# Creacion de un plugin de reglas personalizadas para SonarQube
+## Reglas personalizadas para la arquitectura de capas
+
 Primero checamos la version de SonarQube Docker
 
 ```bash
@@ -26,8 +29,6 @@ mvn archetype:generate -DgroupId=com.miempresa.sonar -DartifactId=arq-rules-plug
 
 Cuarto, instalar manualmente los archivos en la raiz del repositorio local maven, mueve los 4 rchivos .jar y .pom a la raiz del proyecto, y ejecuta los siguientes comandos:
 
-```bash
-
 
 Es la API principal de SonarQube. Contiene las interfaces y clases base que se utilizan para desarrollar plugins. Es la dependencia que defines en tu pom.xml para el desarrollo del plugin
 
@@ -52,11 +53,6 @@ mvn install:install-file \
 -Dpackaging=jar
 ```
 
-Descargar el sonar-java-plugin-8.14.1.39293.jar y sonar-java-plugin-8.14.1.39293.pom desde el repositorio de SonarQube y ejecuta:
-
-```bash
-docker cp sonar-java-plugin-8.14.1.39293.jar sonarqube:/opt/sonarqube/extensions/plugins/
-```
 
 Creas una carpeta dentro de sonar llamada "rules"
 Y creas los siguientes archivos:
