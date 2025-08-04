@@ -124,22 +124,38 @@ Presentacion:
 - NoPersistenceInControllerRule:
   - Un Controller no debe contener consultas SQL o llamadas a 
 EntityManager, JPA, JDBC 
-   - La persistencia es responsabilidad de los Repository
+    - La persistencia es responsabilidad de los Repository
 - NoOtherLayerAnnotationsInControllerRule:
   - Un Controller no debe tener anotaciones de otras capas, como 
 @Service o @Repository 
-   - Su rol debe limitarse estrictamente a manejar peticiones.
-
+    - Su rol debe limitarse estrictamente a manejar peticiones.
 
 
 
 Servicio/Aplicacion:
+- NoControllerAccessFromServiceRule:
+  - Un Service no debe llamar directamente a clases del paquete controller 
+ni exposición. 
+    - La comunicación debe ser unidireccional, desde presentación 
+hacia servicios
+- NoPersistenceInServiceRule:
+  - Una clase de servicio no debe contener SQL, EntityManager, ni lógica 
+de acceso a datos directa 
+    - Debe delegar el acceso a la capa de persistencia (repository).
+
 
 
 Dominio/Modelo:
-- NoFrameworkDependenciesInDomainRule
+- NoFrameworkDependenciesInDomainRule:
   - No debe tener dependencias con Spring (@Component, @Service, 
 @Repository) 
-   - Debe ser completamente independiente del framework.
-Persistencia:
+    - Debe ser completamente independiente del framework.
 
+
+
+Persistencia:
+- NoUpperLayerAccessFromRepositoryRule:
+  - Un repositorio no debe llamar directamente a clases de la capa de 
+servicios o de presentación 
+    - No debe llamar a clases de service, controller ni exposition. 
+     - Su único rol es acceder a los datos. 
