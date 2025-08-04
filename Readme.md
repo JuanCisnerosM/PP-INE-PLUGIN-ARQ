@@ -1,6 +1,12 @@
 # Creacion de un plugin de reglas personalizadas para SonarQube
 ## Reglas personalizadas para la arquitectura de capas
 
+Requisitos previos:
+- Tener Docker instalado y en funcionamiento.
+- Tener acceso a una instancia de SonarQube en ejecución.
+- Tener Maven instalado en tu máquina.
+- Tener Sonar Scanner si te lo pide a la hora de ejecutar el analisis.
+
 Primero checamos la version de SonarQube Docker
 
 ```bash
@@ -52,7 +58,51 @@ mvn install:install-file \
 -Dversion=9.9.0.65466 \
 -Dpackaging=jar
 ```
+Agregar informacion de como personalizar el archivo pom.xml* (revisar el archivo pom.xml del plugin)
 
+V. 1: 
+- Para personalizar el archivo `pom.xml` de tu plugin, debes asegurarte de incluir las dependencias necesarias y configurar correctamente los plugins de construcción:
+
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.miempresa.sonar</groupId>
+    <artifactId>arq-rules-plugin</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.sonarsource.sonarqube</groupId>
+            <artifactId>sonar-plugin-api</artifactId>
+            <version>9.14.0.375</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sonarsource.sonarqube</groupId>
+            <artifactId>sonar-plugin-api-impl</artifactId>
+            <version>9.9.0.65466</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+```
 
 Creas una carpeta dentro de sonar llamada "rules"
 Y creas los siguientes archivos:
@@ -60,7 +110,11 @@ Y creas los siguientes archivos:
 - MyCustomRulesPlugin.java : Este archivo es el plugin propiamente dicho, donde registrarás las definiciones y las reglas creadas. El archivo MyCustomRulesDefinition.java se registra aquí.
 - MyCustomRulesRegistrar.java : Este archivo es para registrar las reglas en el sistema. Normalmente, no es estrictamente necesario para un plugin básico, pero si deseas registrar dinámicamente más reglas o usar funcionalidades avanzadas (como reglas que dependen de parámetros dinámicos), entonces se usa este archivo.
 
-Creamos las reglas, empaquetamos el Maven y copiamos el .JAR a sonarQube y reiniciamos
+
+Despues de crear estos archivos, sugiero empaquetar el plugin para verificar que todo esté funcionando correctamente. (Que el pom.xml esté bien configurado, y que al momento de copiarlo a SonarQube no falle)
+
+
+Una vez que funciono correctamente, creamos las reglas, empaquetamos el Maven y copiamos el .JAR a sonarQube y reiniciamos otra vez
 
 ```bash
 docker cp target/arq-rules-plugin-1.0-SNAPSHOT.jar sonarqube:/opt/sonarqube/extensions/plugins/
