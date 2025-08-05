@@ -36,7 +36,7 @@ public class MyCustomRulesDefinition implements RulesDefinition {
         // Presentation
         // CLAR011: No persistencia en controladores
         // Implementada en: NoPersistenceInControllerRule.java
-        repo.createRule("NoPersistenceInControllerRule")
+        repo.createRule("NoPersistenceInController")
             .setName("No acceso directo a la base de datos desde la capa de presentación")
             .setHtmlDescription("Los Controllers no deben contener consultas SQL o llamadas directas a EntityManager, JPA, JDBC. " +
                 "La persistencia es responsabilidad de los Repositories.")
@@ -46,7 +46,7 @@ public class MyCustomRulesDefinition implements RulesDefinition {
 
         // CLAR012: No anotaciones de otras capas en controladores
         // Implementada en: NoOtherLayerAnnotationsInControllerRule.java
-        repo.createRule("NoOtherLayerAnnotationsInControllerRule")
+        repo.createRule("NoOtherLayerAnnotationsInController")
             .setName("Los Controllers no deben tener anotaciones de otras capas")
             .setHtmlDescription("Los Controllers no deben tener anotaciones como @Service o @Repository. " +
                 "Su rol debe limitarse estrictamente a manejar peticiones.")
@@ -58,7 +58,7 @@ public class MyCustomRulesDefinition implements RulesDefinition {
         // Servicios/Aplicación
         // CLAR021: No acceso a controladores desde servicios
         // Implementada en: NoControllerAccessFromServiceRule.java
-        repo.createRule("NoControllerAccessFromServiceRule")
+        repo.createRule("NoControllerAccessFromService")
             .setName("Los Services no deben llamar a clases del controller ni exposición")
             .setHtmlDescription("Los Services no deben llamar directamente a clases del paquete controller ni exposición. " +
                 "La comunicación debe ser unidireccional, desde presentación hacia servicios.")
@@ -68,7 +68,7 @@ public class MyCustomRulesDefinition implements RulesDefinition {
 
         // CLAR022: No lógica de persistencia en servicios
         // Implementada en: NoPersistenceInServiceRule.java
-        repo.createRule("NoPersistenceInServiceRule")
+        repo.createRule("NoPersistenceInService")
             .setName("Los Services no deben contener lógica de persistencia directa")
             .setHtmlDescription("Los Services no deben contener SQL, EntityManager, ni lógica de acceso a datos directa. " +
                 "La lógica de persistencia pertenece a los Repositories para mantener el principio de responsabilidad única.")
@@ -79,7 +79,7 @@ public class MyCustomRulesDefinition implements RulesDefinition {
         // Domain/Modelo
         // CLAR031: No dependencias de framework en dominio
         // Implementada en: NoFrameworkDependenciesInDomainRule.java
-        repo.createRule("NoFrameworkDependenciesInDomainRule")
+        repo.createRule("NoFrameworkDependenciesInDomain")
             .setName("El dominio/modelo no debe tener dependencias de framework")
             .setHtmlDescription("El dominio/modelo no debe tener dependencias con Spring (@Component, @Service, @Repository). " +
                 "Debe ser completamente independiente del framework.")
@@ -90,7 +90,7 @@ public class MyCustomRulesDefinition implements RulesDefinition {
         // Persistencia
         // CLAR041: No acceso a capas superiores desde repositorios
         // Implementada en: NoUpperLayerAccessFromRepositoryRule.java
-        repo.createRule("NoUpperLayerAccessFromRepositoryRule")
+        repo.createRule("NoUpperLayerAccessFromRepository")
             .setName("Los Repositories no deben llamar a clases de servicios o presentación")
             .setHtmlDescription("Los Repositories no deben llamar directamente a clases de la capa de servicios o presentación. " +
                 "Esto rompe completamente la arquitectura en capas y genera ciclos entre infraestructura ↔ servicio ↔ presentación.")

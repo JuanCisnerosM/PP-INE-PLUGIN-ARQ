@@ -23,34 +23,27 @@ public class NoDomainAccessFromExpositionRule implements Sensor {
     
     // Patrones comunes para identificar paquetes de exposición
     private static final List<String> EXPOSITION_PATTERNS = Arrays.asList(
-        "/exposicion/",
-        ".exposicion.",
-        "/exposition/",
-        ".exposition.",
-        "/rest/",
-        ".rest.",
-        "/controller/",
-        ".controller.",
-        "/controllers/",
-        ".controllers.",
-        "/api/",
-        ".api."
+        "/exposicion/", ".exposicion.",
+        "/exposition/", ".exposition.",
+        "/rest/", ".rest.",
+        "/controller/", ".controller.",
+        "/controllers/", ".controllers.",
+        "/api/", ".api.",
+        "/web/", ".web.",
+        "/presentacion/", ".presentacion.",
+        "/presentation/", ".presentation."
     );
 
     // Patrones comunes para identificar paquetes de dominio/modelo
     private static final List<String> DOMAIN_PATTERNS = Arrays.asList(
-        "/modelo/",
-        ".modelo.",
-        "/model/",
-        ".model.",
-        "/domain/",
-        ".domain.",
-        "/dominio/",
-        ".dominio.",
-        "/entity/",
-        ".entity.",
-        "/entities/",
-        ".entities."
+        "/modelo/", ".modelo.",
+        "/model/", ".model.",
+        "/domain/", ".domain.",
+        "/dominio/", ".dominio.",
+        "/entity/", ".entity.",
+        "/entities/", ".entities.",
+        "/entidad/", ".entidad.",
+        "/entidades/", ".entidades."
     );
 
     @Override
@@ -110,14 +103,6 @@ public class NoDomainAccessFromExpositionRule implements Sensor {
     private boolean isDomainPackage(String imported) {
         String normalizedImport = imported.toLowerCase();
         return DOMAIN_PATTERNS.stream().anyMatch(pattern -> normalizedImport.contains(pattern));
-    }
-
-    private boolean containsDirectDomainReferences(String content) {
-        // Buscar patrones que indiquen uso directo de clases del dominio
-        // Por ejemplo: new Entity(), @Autowired Entity, etc.
-        String normalizedContent = content.toLowerCase();
-        return DOMAIN_PATTERNS.stream()
-            .anyMatch(pattern -> normalizedContent.contains(pattern.replace("/", "").replace(".", "")));
     }
 
     private void createIssue(SensorContext context, InputFile inputFile, String importedClass, int line, String codeLine) {

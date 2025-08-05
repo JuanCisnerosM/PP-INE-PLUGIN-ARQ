@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Rule(
-    key = "NoOtherLayerAnnotationsInControllerRule",
+    key = "NoOtherLayerAnnotationsInController",
     name = "Controllers should not have annotations from other layers",
     description = "Controllers should not have annotations like @Service or @Repository. Their role should be limited strictly to handling requests.",
     priority = Priority.MAJOR,
@@ -49,8 +49,9 @@ public class NoOtherLayerAnnotationsInControllerRule implements Sensor {
         FORBIDDEN_ANNOTATIONS.add(Pattern.compile("@PersistenceUnit\\b"));
     }
 
-    private static final Pattern CONTROLLER_PATTERN = Pattern.compile("@(Rest)?Controller\\b");
-    private static final Pattern PRESENTATION_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(presentacion|exposicion)\\b");
+    private static final Pattern CONTROLLER_ANNOTATION_PATTERN = Pattern.compile("@(Rest)?Controller\\b");
+    private static final Pattern CONTROLLER_CLASS_PATTERN = Pattern.compile("class\\s+\\w*Controller\\w*\\s*\\{");
+    private static final Pattern PRESENTATION_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(presentacion|presentation|exposicion|exposition|controller|controllers|rest|api|web)\\b", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void describe(@Nonnull SensorDescriptor descriptor) {
@@ -74,10 +75,19 @@ public class NoOtherLayerAnnotationsInControllerRule implements Sensor {
         try {
             String content = new String(inputFile.contents().getBytes(), StandardCharsets.UTF_8);
             
-            // Solo analizar archivos que están en los paquetes de presentación o exposición
-            // y que son controladores
-            if (!PRESENTATION_PACKAGE_PATTERN.matcher(content).find() || 
-                !CONTROLLER_PATTERN.matcher(content).find()) {
+            // Verificar si está en paquete de presentación por package statement o por ruta
+            boolean isPresentationPackage = PRESENTATION_PACKAGE_PATTERN.matcher(content).find() || 
+                                          isControllerPath(inputFile.toString());
+            
+            if (!isPresentationPackage) {
+                return;
+            }
+            
+            // Verificar si es un controlador (por anotación o por nombre de clase)
+            boolean isController = CONTROLLER_ANNOTATION_PATTERN.matcher(content).find() ||
+                                 CONTROLLER_CLASS_PATTERN.matcher(content).find();
+            
+            if (!isController) {
                 return;
             }
 
@@ -103,5 +113,18 @@ public class NoOtherLayerAnnotationsInControllerRule implements Sensor {
                 .onFile(inputFile)
                 .save();
         }
+    }
+
+    private boolean isControllerPath(String filePath) {
+        String normalizedPath = filePath.replace("\\", "/").toLowerCase();
+        return normalizedPath.contains("/presentacion/") || 
+               normalizedPath.contains("/presentation/") || 
+               normalizedPath.contains("/exposicion/") || 
+               normalizedPath.contains("/exposition/") || 
+               normalizedPath.contains("/controller/") || 
+               normalizedPath.contains("/controllers/") || 
+               normalizedPath.contains("/rest/") || 
+               normalizedPath.contains("/api/") || 
+               normalizedPath.contains("/web/");
     }
 }

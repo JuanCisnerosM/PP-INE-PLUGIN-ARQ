@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Rule(
-    key = "NoPersistenceInControllerRule",
+    key = "NoPersistenceInController",
     name = "Controllers should not contain direct persistence operations",
     description = "Controllers should not contain SQL queries or direct calls to EntityManager, JPA, JDBC. Persistence operations should be handled by Repositories.",
     priority = Priority.MAJOR,
@@ -42,18 +42,24 @@ public class NoPersistenceInControllerRule implements Sensor {
         PERSISTENCE_PATTERNS.add(Pattern.compile("\\.createNativeQuery\\("));
         PERSISTENCE_PATTERNS.add(Pattern.compile("\\.persist\\("));
         PERSISTENCE_PATTERNS.add(Pattern.compile("\\.merge\\("));
+        PERSISTENCE_PATTERNS.add(Pattern.compile("\\.remove\\("));
+        PERSISTENCE_PATTERNS.add(Pattern.compile("\\.find\\("));
         PERSISTENCE_PATTERNS.add(Pattern.compile("PreparedStatement"));
         PERSISTENCE_PATTERNS.add(Pattern.compile("Connection\\s+\\w+"));
+        PERSISTENCE_PATTERNS.add(Pattern.compile("\\.getResultList\\("));
+        PERSISTENCE_PATTERNS.add(Pattern.compile("\\.getSingleResult\\("));
         
         // Patrones específicos para la estructura de paquetes institucional
         PERSISTENCE_PATTERNS.add(Pattern.compile("import\\s+[\\w.]+\\.persistencia\\."));
         PERSISTENCE_PATTERNS.add(Pattern.compile("import\\s+javax\\.persistence\\."));
+        PERSISTENCE_PATTERNS.add(Pattern.compile("import\\s+jakarta\\.persistence\\."));
         PERSISTENCE_PATTERNS.add(Pattern.compile("import\\s+org\\.springframework\\.data\\.jpa\\."));
         PERSISTENCE_PATTERNS.add(Pattern.compile("import\\s+org\\.hibernate\\."));
     }
 
-    private static final Pattern CONTROLLER_PATTERN = Pattern.compile("@(Rest)?Controller\\s+");
-    private static final Pattern PRESENTATION_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(presentacion|exposicion)\\b");
+    private static final Pattern CONTROLLER_ANNOTATION_PATTERN = Pattern.compile("@(Rest)?Controller\\s+");
+    private static final Pattern CONTROLLER_CLASS_PATTERN = Pattern.compile("class\\s+(\\w*Controller\\w*)\\s*\\{");
+    private static final Pattern PRESENTATION_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(presentacion|exposicion|exposition|controller|rest)\\b", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void describe(@Nonnull SensorDescriptor descriptor) {
@@ -78,9 +84,15 @@ public class NoPersistenceInControllerRule implements Sensor {
             String content = new String(inputFile.contents().getBytes(), StandardCharsets.UTF_8);
             
             // Solo analizar archivos que están en los paquetes de presentación o exposición
-            // y que son controladores
-            if (!PRESENTATION_PACKAGE_PATTERN.matcher(content).find() || 
-                !CONTROLLER_PATTERN.matcher(content).find()) {
+            if (!PRESENTATION_PACKAGE_PATTERN.matcher(content).find()) {
+                return;
+            }
+            
+            // Verificar si es un controlador (por anotación o por nombre de clase)
+            boolean isController = CONTROLLER_ANNOTATION_PATTERN.matcher(content).find() ||
+                                 CONTROLLER_CLASS_PATTERN.matcher(content).find();
+            
+            if (!isController) {
                 return;
             }
 

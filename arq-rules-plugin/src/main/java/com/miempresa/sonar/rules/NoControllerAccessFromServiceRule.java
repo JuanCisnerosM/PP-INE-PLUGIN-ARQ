@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Rule(
-    key = "NoControllerAccessFromServiceRule",
+    key = "NoControllerAccessFromService",
     name = "Services should not call controller or exposition classes",
     description = "Services should not call classes from controller or exposition packages. Communication must be unidirectional, from presentation to services.",
     priority = Priority.MAJOR,
@@ -30,7 +30,9 @@ public class NoControllerAccessFromServiceRule implements Sensor {
         // Importaciones de paquetes de presentación/exposición
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.presentacion\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.exposicion\\."));
+        FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.exposition\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.controller\\."));
+        FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.controllers\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.web\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.rest\\."));
         
@@ -57,10 +59,17 @@ public class NoControllerAccessFromServiceRule implements Sensor {
         FORBIDDEN_USAGE_PATTERNS.add(Pattern.compile("@PatchMapping\\b"));
         FORBIDDEN_USAGE_PATTERNS.add(Pattern.compile("@Controller\\b"));
         FORBIDDEN_USAGE_PATTERNS.add(Pattern.compile("@RestController\\b"));
+        
+        // Patrones adicionales para detectar uso de controladores
+        FORBIDDEN_USAGE_PATTERNS.add(Pattern.compile("new\\s+\\w*Controller\\w*\\s*\\("));
+        FORBIDDEN_USAGE_PATTERNS.add(Pattern.compile("\\w*Controller\\w*\\s+\\w+\\s*="));
+        FORBIDDEN_USAGE_PATTERNS.add(Pattern.compile("private\\s+.*Controller.*\\s+\\w+\\s*;"));
+        FORBIDDEN_USAGE_PATTERNS.add(Pattern.compile("protected\\s+.*Controller.*\\s+\\w+\\s*;"));
+        FORBIDDEN_USAGE_PATTERNS.add(Pattern.compile("public\\s+.*Controller.*\\s+\\w+\\s*;"));
     }
 
-    private static final Pattern SERVICE_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(servicios|services|aplicacion|application)\\b");
-    private static final Pattern SERVICE_CLASS_PATTERN = Pattern.compile("@Service\\b|class\\s+\\w*Service\\w*");
+    private static final Pattern SERVICE_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(servicios|services|service)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SERVICE_CLASS_PATTERN = Pattern.compile("@Service\\b|class\\s+\\w*Service\\w*\\s*\\{", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void describe(@Nonnull SensorDescriptor descriptor) {

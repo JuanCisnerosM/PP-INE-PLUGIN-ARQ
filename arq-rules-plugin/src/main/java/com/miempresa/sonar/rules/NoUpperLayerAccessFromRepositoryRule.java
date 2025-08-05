@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Rule(
-    key = "NoUpperLayerAccessFromRepositoryRule",
+    key = "NoUpperLayerAccessFromRepository",
     name = "Repositories should not call service or presentation layer classes",
     description = "Repositories should not call classes from service or presentation layers. This breaks layered architecture and creates cycles between infrastructure ↔ service ↔ presentation.",
     priority = Priority.CRITICAL,
@@ -30,12 +30,15 @@ public class NoUpperLayerAccessFromRepositoryRule implements Sensor {
         // Importaciones de capa de servicios/aplicación
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.servicios\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.services\\."));
+        FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.service\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.aplicacion\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.application\\."));
         
         // Importaciones de capa de presentación/exposición
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.presentacion\\."));
+        FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.presentation\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.exposicion\\."));
+        FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.exposition\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.controller\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.controllers\\."));
         FORBIDDEN_IMPORTS.add(Pattern.compile("import\\s+[\\w.]+\\.web\\."));
@@ -78,8 +81,8 @@ public class NoUpperLayerAccessFromRepositoryRule implements Sensor {
         FORBIDDEN_USAGE_PATTERNS.add(Pattern.compile("@PatchMapping\\b"));
     }
 
-    private static final Pattern REPOSITORY_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(persistencia|persistence|repository|repositories|infrastructure|infraestructura)\\b");
-    private static final Pattern REPOSITORY_CLASS_PATTERN = Pattern.compile("@Repository\\b|class\\s+\\w*Repository\\w*|interface\\s+\\w*Repository\\w*");
+    private static final Pattern REPOSITORY_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(persistencia|persistence|repository|repositories|infrastructure|infraestructura|dao|daos)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REPOSITORY_CLASS_PATTERN = Pattern.compile("@Repository\\b|class\\s+\\w*Repository\\w*\\s*\\{|interface\\s+\\w*Repository\\w*\\s*\\{", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void describe(@Nonnull SensorDescriptor descriptor) {
@@ -103,10 +106,12 @@ public class NoUpperLayerAccessFromRepositoryRule implements Sensor {
         try {
             String content = new String(inputFile.contents().getBytes(), StandardCharsets.UTF_8);
             
-            // Solo analizar archivos que están en el paquete de persistencia
-            // o que son clases de repositorio
-            if (!REPOSITORY_PACKAGE_PATTERN.matcher(content).find() && 
-                !REPOSITORY_CLASS_PATTERN.matcher(content).find()) {
+            // Verificar si está en paquete de repositorio por package statement o por ruta
+            boolean isRepositoryPackage = REPOSITORY_PACKAGE_PATTERN.matcher(content).find() || 
+                                        REPOSITORY_CLASS_PATTERN.matcher(content).find() ||
+                                        isRepositoryPath(inputFile.toString());
+            
+            if (!isRepositoryPackage) {
                 return;
             }
 
@@ -145,6 +150,18 @@ public class NoUpperLayerAccessFromRepositoryRule implements Sensor {
                 .onFile(inputFile)
                 .save();
         }
+    }
+
+    private boolean isRepositoryPath(String filePath) {
+        String normalizedPath = filePath.replace("\\", "/").toLowerCase();
+        return normalizedPath.contains("/persistencia/") || 
+               normalizedPath.contains("/persistence/") || 
+               normalizedPath.contains("/repository/") || 
+               normalizedPath.contains("/repositories/") || 
+               normalizedPath.contains("/infrastructure/") || 
+               normalizedPath.contains("/infraestructura/") || 
+               normalizedPath.contains("/dao/") || 
+               normalizedPath.contains("/daos/");
     }
 }
 

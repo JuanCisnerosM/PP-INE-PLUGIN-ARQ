@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Rule(
-    key = "NoFrameworkDependenciesInDomainRule",
+    key = "NoFrameworkDependenciesInDomain",
     name = "Domain/Model should not have framework dependencies",
     description = "Domain/Model layer should not have Spring dependencies like @Component, @Service, @Repository. It must be completely framework independent.",
     priority = Priority.MAJOR,
@@ -69,7 +69,7 @@ public class NoFrameworkDependenciesInDomainRule implements Sensor {
         FRAMEWORK_IMPORTS.add(Pattern.compile("import\\s+org\\.springframework\\.web\\."));
     }
 
-    private static final Pattern DOMAIN_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(modelo|domain)\\b");
+    private static final Pattern DOMAIN_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(modelo|model|domain|dominio|entity|entities|entidad|entidades)\\b", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void describe(@Nonnull SensorDescriptor descriptor) {
@@ -93,8 +93,11 @@ public class NoFrameworkDependenciesInDomainRule implements Sensor {
         try {
             String content = new String(inputFile.contents().getBytes(), StandardCharsets.UTF_8);
             
-            // Solo analizar archivos que están en el paquete de dominio/modelo
-            if (!DOMAIN_PACKAGE_PATTERN.matcher(content).find()) {
+            // Verificar si está en paquete de dominio por package statement o por ruta
+            boolean isDomainPackage = DOMAIN_PACKAGE_PATTERN.matcher(content).find() || 
+                                    isDomainPath(inputFile.toString());
+            
+            if (!isDomainPackage) {
                 return;
             }
 
@@ -133,6 +136,18 @@ public class NoFrameworkDependenciesInDomainRule implements Sensor {
                 .onFile(inputFile)
                 .save();
         }
+    }
+
+    private boolean isDomainPath(String filePath) {
+        String normalizedPath = filePath.replace("\\", "/").toLowerCase();
+        return normalizedPath.contains("/modelo/") || 
+               normalizedPath.contains("/model/") || 
+               normalizedPath.contains("/domain/") || 
+               normalizedPath.contains("/dominio/") || 
+               normalizedPath.contains("/entity/") || 
+               normalizedPath.contains("/entities/") || 
+               normalizedPath.contains("/entidad/") || 
+               normalizedPath.contains("/entidades/");
     }
 }
 

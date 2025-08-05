@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Rule(
-    key = "NoPersistenceInServiceRule",
+    key = "NoPersistenceInService",
     name = "Services should not contain direct persistence logic",
     description = "Services should not contain SQL, EntityManager, or direct data access logic. Persistence logic belongs to Repositories to maintain single responsibility principle.",
     priority = Priority.MAJOR,
@@ -92,8 +92,8 @@ public class NoPersistenceInServiceRule implements Sensor {
         PERSISTENCE_USAGE_PATTERNS.add(Pattern.compile("\\.queryForList\\("));
     }
 
-    private static final Pattern SERVICE_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(servicios|services|aplicacion|application)\\b");
-    private static final Pattern SERVICE_CLASS_PATTERN = Pattern.compile("@Service\\b|class\\s+\\w*Service\\w*");
+    private static final Pattern SERVICE_PACKAGE_PATTERN = Pattern.compile("package\\s+[\\w.]+\\.(servicios|services|service|aplicacion|application)\\b", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SERVICE_CLASS_PATTERN = Pattern.compile("@Service\\b|class\\s+\\w*Service\\w*\\s*\\{", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void describe(@Nonnull SensorDescriptor descriptor) {
@@ -117,10 +117,12 @@ public class NoPersistenceInServiceRule implements Sensor {
         try {
             String content = new String(inputFile.contents().getBytes(), StandardCharsets.UTF_8);
             
-            // Solo analizar archivos que están en el paquete de servicios
-            // o que son clases de servicio
-            if (!SERVICE_PACKAGE_PATTERN.matcher(content).find() && 
-                !SERVICE_CLASS_PATTERN.matcher(content).find()) {
+            // Verificar si está en paquete de servicios por package statement o por ruta
+            boolean isServicePackage = SERVICE_PACKAGE_PATTERN.matcher(content).find() || 
+                                     SERVICE_CLASS_PATTERN.matcher(content).find() ||
+                                     isServicePath(inputFile.toString());
+            
+            if (!isServicePackage) {
                 return;
             }
 
@@ -173,6 +175,15 @@ public class NoPersistenceInServiceRule implements Sensor {
                 .onFile(inputFile)
                 .save();
         }
+    }
+
+    private boolean isServicePath(String filePath) {
+        String normalizedPath = filePath.replace("\\", "/").toLowerCase();
+        return normalizedPath.contains("/servicios/") || 
+               normalizedPath.contains("/services/") || 
+               normalizedPath.contains("/service/") || 
+               normalizedPath.contains("/aplicacion/") || 
+               normalizedPath.contains("/application/");
     }
 }
 
